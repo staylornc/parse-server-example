@@ -15,10 +15,32 @@ var api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'myAppId',
-  masterKey: process.env.MASTER_KEY || '51b68cd5-6b6b-415c-900c-67784ee5e94a', //Add your master key here. Keep it secret!
+  masterKey: process.env.MASTER_KEY || 'MASTER_KEY_HERE', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',  // Don't forget to change to https if needed
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
+  },
+
+  // here the configuration for email begins
+  verifyUserEmails: true,  //depends on your needs, you can set it to false 
+  emailVerifyTokenValidityDuration: 2 * 60 * 60, // in seconds (2 hours = 7200 seconds)
+  preventLoginWithUnverifiedEmail: false, // defaults to false
+
+  publicServerURL: 'https://hatteras.herokuapp.com/parse',
+  // Your apps name. This will appear in the subject and body of the emails that are sent.
+  appName: process.env.APP_NAME ||'APP_NAME_HERE',
+
+  // The email adapter
+  emailAdapter: {
+    module: 'parse-server-simple-mailgun-adapter',
+    options: {
+      // The address that your emails come from
+      fromAddress: 'do-not-reply@openyourmindgames.com',
+      // Your domain from mailgun.com
+      domain: 'openyourmindgames.com',
+      // Your API key from mailgun.com
+      apiKey: process.env.MAILGUN_API_KEY ||'MG_KEY_HERE',
+    }
   }
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
@@ -35,20 +57,20 @@ var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
 
 // Parse Server plays nicely with the rest of your web routes
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
-app.get('/test', function(req, res) {
+app.get('/test', function (req, res) {
   res.sendFile(path.join(__dirname, '/public/test.html'));
 });
 
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
-httpServer.listen(port, function() {
-    console.log('parse-server-example running on port ' + port + '.');
+httpServer.listen(port, function () {
+  console.log('parse-server-example running on port ' + port + '.');
 });
 
 // This will enable the Live Query real-time server
