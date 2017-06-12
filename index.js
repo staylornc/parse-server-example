@@ -35,9 +35,9 @@ var api = new ParseServer({
     module: 'parse-server-simple-mailgun-adapter',
     options: {
       // The address that your emails come from
-      fromAddress: 'do-not-reply@openyourmindgames.com',
+      fromAddress: process.env.EMAIL_FROM_ADDRESS || 'YOUR_EMAIL_HERE',
       // Your domain from mailgun.com
-      domain: 'openyourmindgames.com',
+      domain: process.env.EMAIL_DOMAIN ||'YOUR_EMAIL_DOMAIN_HERE',
       // Your API key from mailgun.com
       apiKey: process.env.MAILGUN_API_KEY ||'MG_KEY_HERE',
     }
